@@ -1,1 +1,55 @@
-/cloudgene/cloudgene-0.3.0/apps/HTSeqCount/HTSeq-count.yaml
+name: HTSeq-count
+description: HTSeq-count from HTSeq Python package 
+category: Bioinfo-tools
+version: 1.0.0
+website: http://www-huber.embl.de/users/anders/HTSeq/doc/overview.html
+author: Simon Anders, Alexey Siretskiy (Hadoop version)
+
+
+
+mapred:
+
+
+  steps:
+
+    - name: Counting genes...
+      mapper: /home/alexey/HTseqCount/mapper.py --gff GFF --type=gene --idattr=ID --sam -
+      reducer: /home/alexey/HTseqCount/reducer.py 
+      params:
+              -Dmapred.output.compress=true
+              -Dmapred.output.compression.codec=org.apache.hadoop.io.compress.BZip2Codec
+              -Dmapred.reduce.tasks=1
+              -Dmapred.reduce.slowstart.completed.maps=.95
+              -archives $inputGFF#GFF 
+              -input $inputSAM
+              -output $output
+              -file /home/alexey/HTseqCount/mapper.py
+              -file /home/alexey/HTseqCount/reducer.py
+  inputs:
+    - id: inputSAM
+      description: SAM file with alignments
+      type: hdfs-file
+
+    - id: inputGFF
+      description: GFF file for the species, JAR 
+      type: hdfs-file
+
+  outputs:
+    - id: output
+      description: Gene counts
+      type: hdfs-folder
+      download: yes
+      mergeOutput: true
+#  outputs:
+##    - id: output
+#      description: Output Folder
+#      type: hdfs-folder
+#      mergeOutput: false
+#      download: true
+#      zip: false
+
+    - id: temp 
+      description: Temp
+      type: hdfs-folder
+      download: false
+      temp: true
