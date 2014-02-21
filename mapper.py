@@ -40,11 +40,3 @@ cmd+=[args['sam'], gffFile]
 
 #print cmd
 call(cmd)
-
-#call(["readlink","-f", args['gff']])
-
-#if args['gff'] == 'gff':
-#	print args['bar']
-    # code here
-
-
